@@ -1,0 +1,73 @@
+/* ─── CSS Variables ──────────────────────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --gold:       #B8965A;
+  --gold-light: #D4B483;
+  --gold-dim:   #7A6038;
+
+  /* Backgrounds */
+  --bg:  #0F0E0C;
+  --bg2: #1A1814;
+  --bg3: #242018;
+  --bg4: #2E2A22;
+
+  /* Text */
+  --text:  #F0EBE0;
+  --text2: #A89E8A;
+  --text3: #6B6356;
+
+  /* Borders */
+  --border:  #3A342A;
+  --border2: #4A4338;
+
+  /* Message colors */
+  --ai-bg:    #1A1814;
+  --user-bg:  #1E3A2E;
+  --user-text: #A8D4B8;
+
+  /* Cards */
+  --card-bg:     #221F18;
+  --card-border: #3A342A;
+
+  /* Agent trace */
+  --trace-bg: rgba(184, 150, 90, 0.06);
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar global ───────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+
+*::-webkit-scrollbar       { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ─── Focus ring ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--gold-dim);
+  outline-offset: 2px;
+}
