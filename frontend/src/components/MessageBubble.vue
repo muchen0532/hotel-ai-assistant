@@ -61,19 +61,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ChatMessage, RestaurantCard } from '@/types'
-import { useAuthStore } from '@/stores/auth'
 import { useMarkdown } from '@/composables/useMarkdown'
 import TypingIndicator from './TypingIndicator.vue'
 import InfoGrid from './InfoGrid.vue'
 import AgentTrace from './AgentTrace.vue'
 import FaqChips from './FaqChips.vue'
-
-const authStore = useAuthStore()
-
-const initials = computed(() => {
-  const name = authStore.guestName
-  return name.slice(0, 2).toUpperCase()
-})
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps<{ message: ChatMessage }>()
 const emit = defineEmits<{
@@ -81,6 +74,7 @@ const emit = defineEmits<{
   (e: 'card-select', card: RestaurantCard): void
 }>()
 
+const authStore = useAuthStore()
 
 const isTyping = computed(
   () => props.message.status === 'streaming' && !props.message.content
@@ -89,6 +83,11 @@ const isTyping = computed(
 const renderedContent = computed(() =>
   useMarkdown(props.message.content)
 )
+
+const initials = computed(() => {
+  const name = authStore.guestName
+  return name.slice(0, 2).toUpperCase()
+})
 
 const formattedTime = computed(() => {
   const d = props.message.timestamp

@@ -68,19 +68,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // ─── Theme injection ──────────────────────────────────────────────────────
-  const DEFAULT_THEME: HotelTheme = {
-    accent: '#B8965A',
-    accent_light: '#D4B483',
-    accent_dim: '#7A6038',
-  }
 
-  // 安全应用主题
-  function applyTheme(theme?: HotelTheme) {
+  function applyTheme(theme: HotelTheme) {
     const root = document.documentElement
-    const t = theme ?? DEFAULT_THEME
-    root.style.setProperty('--gold',       t.accent)
-    root.style.setProperty('--gold-light', t.accent_light)
-    root.style.setProperty('--gold-dim',   t.accent_dim)
+    root.style.setProperty('--gold',       theme.accent)
+    root.style.setProperty('--gold-light', theme.accent_light)
+    root.style.setProperty('--gold-dim',   theme.accent_dim)
   }
 
   function resetTheme() {

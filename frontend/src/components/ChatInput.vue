@@ -49,7 +49,7 @@ withDefaults(defineProps<{
   quickActions?: QuickAction[]
 }>(), {
   disabled: false,
-  placeholder: 'Ask your concierge anything…',
+  placeholder: '向 AI 助手咨询任何问题…',
   quickActions: () => [],
 })
 

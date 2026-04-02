@@ -2,12 +2,16 @@ import { computed } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
+// Configure marked for chat output
 marked.setOptions({
-  breaks: true,
+  breaks: true,   // \n → <br>
   gfm: true,
 })
 
-
+/**
+ * Returns sanitized HTML from a markdown string.
+ * Safe to bind with v-html.
+ */
 export function useMarkdown(raw: string): string {
   const html = marked.parse(raw) as string
   return DOMPurify.sanitize(html, {
@@ -20,7 +24,9 @@ export function useMarkdown(raw: string): string {
   })
 }
 
-
+/**
+ * Reactive version for use in template.
+ */
 export function useMarkdownComputed(rawRef: () => string) {
   return computed(() => useMarkdown(rawRef()))
 }

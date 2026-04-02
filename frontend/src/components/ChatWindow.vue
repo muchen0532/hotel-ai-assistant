@@ -80,7 +80,7 @@ const { logout } = useGuestAuth()
 
 const emit = defineEmits<{ (e: 'logout'): void }>()
 
-const { containerRef, onScroll, scrollToBottom, isAutoScrollEnabled } =
+const { onScroll, scrollToBottom, isAutoScrollEnabled } =
   useAutoScroll(ref(store.messages))
 
 const chatInputRef = ref<InstanceType<typeof ChatInput> | null>(null)

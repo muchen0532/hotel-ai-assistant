@@ -10,7 +10,6 @@
         <div class="brand-name">Hotel AI Assistant</div>
       </div>
 
-
       <!-- Form -->
       <form class="auth-form" @submit.prevent="handleSubmit" novalidate>
 
@@ -19,9 +18,9 @@
           <label for="hotel_code">Hotel code</label>
           <input
             id="hotel_code"
-            readonly
             v-model="form.hotel_code"
             type="text"
+            placeholder="e.g. GRANDPLC"
             autocomplete="off"
             autocapitalize="characters"
             maxlength="12"
@@ -39,9 +38,9 @@
           <label for="room_number">Room number</label>
           <input
             id="room_number"
-            readonly
             v-model="form.room_number"
             type="text"
+            placeholder="e.g. 1204"
             autocomplete="off"
             maxlength="8"
             :disabled="isLoading"
@@ -57,9 +56,9 @@
           <label for="guest_name">Your name</label>
           <input
             id="guest_name"
-            readonly
             v-model="form.guest_name"
             type="text"
+            placeholder="e.g. Jane Smith"
             autocomplete="given-name"
             maxlength="60"
             :disabled="isLoading"
@@ -108,18 +107,16 @@
           </button>
         </div>
       </div>
-      
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useGuestAuth } from '@/composables/useGuestAuth'
-import { onMounted } from 'vue'
 
-onMounted(() => {
+onMounted(()=>{
   fillDemo(DEMO_HOTELS[0])
 })
 
@@ -133,7 +130,7 @@ const emit = defineEmits<{ (e: 'authenticated'): void }>()
 const form = reactive({
   hotel_code:  '',
   room_number: '',
-  guest_name:  'Demo Guest',
+  guest_name:  '',
 })
 
 const fieldErrors = reactive<Record<string, string>>({})
@@ -142,8 +139,9 @@ const isLoading = computed(() => authStore.status === 'loading')
 // ─── Demo data ─────────────────────────────────────────────────────────────
 
 const DEMO_HOTELS = [
-  { name: '智宿酒店', code: 'NEXSTAY', room: '905',  color: '#6C8EF5' },
-  { name: '樱花旅馆', code: 'SAKURA',  room: '308',  color: '#D4849A' },
+  { name: '智宿酒店',    code: 'NEXSTAY', room: '1204', color: '#B8965A' },
+  { name: '樱花旅馆',      code: 'SAKURAINN', room: '308',  color: '#D4849A' },
+  { name: '山海民宿',  code: 'MTNOCEAN', room: '101',  color: '#7AB85A' },
 ]
 
 function fillDemo(demo: typeof DEMO_HOTELS[0]) {
@@ -266,7 +264,6 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 8px;
 }
 
 .field {

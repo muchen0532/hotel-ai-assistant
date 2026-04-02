@@ -1,6 +1,6 @@
 <template>
   <div class="welcome">
-    <div class="welcome-icon">{{ hotel.logo }}</div>
+    <div class="welcome-icon"></div>
     <h1 class="welcome-title">
       Welcome, {{ guestName }}<br />
       <span class="hotel-name-display">{{ hotel.name }}</span>

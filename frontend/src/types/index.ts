@@ -46,7 +46,6 @@ export interface ChatMessage {
 export interface HotelConfig {
   hotel_id: string
   name: string
-  logo: string
   tagline: string
   location: string       // e.g. "Taipei, Taiwan"
   locale: string         // e.g. "zh-TW" — controls UI language hints

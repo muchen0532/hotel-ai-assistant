@@ -1,7 +1,7 @@
 <template>
   <header class="chat-header">
     <div class="header-left">
-      <div class="brand-logo">⟦H⟧</div>
+      <div class="hotel-logo">⟦H⟧</div>
       <div class="header-text">
         <div class="hotel-name">{{ hotel.name }}</div>
         <div class="hotel-sub">Room {{ roomNumber }} · {{ guestName }}</div>
@@ -95,7 +95,7 @@ onUnmounted(() => clearInterval(timer))
   min-width: 0;
 }
 
-.brand-logo {
+.hotel-logo {
   width: 34px;
   height: 34px;
   border-radius: 50%;

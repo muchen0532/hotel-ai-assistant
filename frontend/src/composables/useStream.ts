@@ -1,3 +1,12 @@
+/**
+ * useStream — Server-Sent Events composable for streaming AI responses.
+ *
+ * Backend MUST stream lines in the format:
+ *   data: {"type":"text_delta","delta":"..."}
+ *   data: {"type":"meta","meta":{...}}
+ *   data: {"type":"done"}
+ *   data: {"type":"error","error":"..."}
+ */
 import { ref } from 'vue'
 import type { StreamChunk, MessageMeta } from '@/types'
 import { useChatStore } from '@/stores/chat'
@@ -14,8 +23,10 @@ export function useStream() {
     store.isLoading = true
     store.clearError()
 
+    // 1. Add user bubble immediately
     store.addUserMessage(userMessage)
 
+    // 2. Add empty assistant placeholder (shows typing dots)
     const placeholder = store.addAssistantPlaceholder()
 
     try {
@@ -23,8 +34,9 @@ export function useStream() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          session_id: authStore.guestSession?.session_id,
-          message: userMessage,
+          session_id: authStore.sessionId,
+          hotel_id:   authStore.hotelId,
+          message:    userMessage,
         }),
         signal: AbortSignal.timeout(60_000),
       })
@@ -36,6 +48,7 @@ export function useStream() {
 
       if (!response.body) throw new Error('No response body')
 
+      // 3. Read SSE stream via ReadableStream
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
@@ -46,8 +59,9 @@ export function useStream() {
 
         buffer += decoder.decode(value, { stream: true })
 
+        // Split on newlines; SSE lines start with "data: "
         const lines = buffer.split('\n')
-        buffer = lines.pop() ?? ''
+        buffer = lines.pop() ?? ''    // keep incomplete last line
 
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue
@@ -65,6 +79,7 @@ export function useStream() {
         }
       }
 
+      // Flush remaining buffer
       if (buffer.startsWith('data: ')) {
         const raw = buffer.slice(6).trim()
         if (raw && raw !== '[DONE]') {
