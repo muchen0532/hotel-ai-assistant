@@ -26,8 +26,8 @@ export interface AgentTraceStep {
 
 export interface MessageMeta {
   cards?: RestaurantCard[]
-  infoGrid?: InfoGridItem[]
-  agentTrace?: AgentTraceStep[]
+  info_grid?: InfoGridItem[]
+  agent_trace?: AgentTraceStep[]
   chips?: string[]
 }
 

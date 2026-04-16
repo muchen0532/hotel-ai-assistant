@@ -46,6 +46,7 @@ export function useStream() {
         throw new Error(`HTTP ${response.status}: ${text}`)
       }
 
+
       if (!response.body) throw new Error('No response body')
 
       // 3. Read SSE stream via ReadableStream
@@ -59,13 +60,15 @@ export function useStream() {
 
         buffer += decoder.decode(value, { stream: true })
 
+
         // Split on newlines; SSE lines start with "data: "
         const lines = buffer.split('\n')
+
         buffer = lines.pop() ?? ''    // keep incomplete last line
 
         for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          const raw = line.slice(6).trim()
+          if (!line.startsWith('data:')) continue
+          const raw = line.slice(5).trim()
           if (!raw || raw === '[DONE]') continue
 
           let chunk: StreamChunk
