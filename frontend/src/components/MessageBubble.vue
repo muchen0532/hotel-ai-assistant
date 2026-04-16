@@ -25,13 +25,13 @@
 
       <!-- Rich meta: info grid -->
       <InfoGrid
-        v-if="message.meta?.infoGrid?.length"
-        :items="message.meta.infoGrid"
+        v-if="message.meta?.info_grid?.length"
+        :items="message.meta.info_grid"
       />
 
       <!-- Rich meta: restaurant cards -->
       <div v-if="message.meta?.cards?.length" class="cards-row">
-        <RestaurantCard
+        <RestaurantCardView
           v-for="card in message.meta.cards"
           :key="card.name"
           :card="card"
@@ -41,8 +41,8 @@
 
       <!-- Agent trace -->
       <AgentTrace
-        v-if="message.meta?.agentTrace?.length"
-        :steps="message.meta.agentTrace"
+        v-if="message.meta?.agent_trace?.length"
+        :steps="message.meta.agent_trace"
       />
 
       <!-- Follow-up chips -->
@@ -67,6 +67,8 @@ import InfoGrid from './InfoGrid.vue'
 import AgentTrace from './AgentTrace.vue'
 import FaqChips from './FaqChips.vue'
 import { useAuthStore } from '@/stores/auth'
+import RestaurantCardView from './RestaurantCard.vue'
+
 
 const props = defineProps<{ message: ChatMessage }>()
 const emit = defineEmits<{
