@@ -137,7 +137,7 @@ function detectIntent(msg) {
 
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
-const send  = (res, chunk) => res.write(`data: ${JSON.stringify(chunk)}\n\n`)
+const send  = (res, chunk) => res.write(`data:${JSON.stringify(chunk)}\n\n`)
 
 async function streamText(res, text) {
   for (const word of text.split('')) {
@@ -148,14 +148,14 @@ async function streamText(res, text) {
 
 async function streamTrace(res, baseMeta, steps) {
   const trace = steps.map(label => ({ label, status: 'pending' }))
-  send(res, { type: 'meta', meta: { ...baseMeta, agentTrace: trace } })
+  send(res, { type: 'meta', meta: { ...baseMeta, agent_trace: trace } })
   await sleep(180)
   for (let i = 0; i < trace.length; i++) {
     trace[i].status = 'running'
-    send(res, { type: 'meta', meta: { ...baseMeta, agentTrace: [...trace] } })
+    send(res, { type: 'meta', meta: { ...baseMeta, agent_trace: [...trace] } })
     await sleep(280 + Math.random() * 180)
     trace[i].status = 'done'
-    send(res, { type: 'meta', meta: { ...baseMeta, agentTrace: [...trace] } })
+    send(res, { type: 'meta', meta: { ...baseMeta, agent_trace: [...trace] } })
     await sleep(50)
   }
 }
@@ -234,7 +234,7 @@ async function handleChatStream(req, res) {
     const faq = hotel.faq[intent]
     await streamText(res, faq.text)
     await sleep(80)
-    send(res, { type: 'meta', meta: { infoGrid: faq.grid, chips: hotel.welcome_chips.slice(0, 3) } })
+    send(res, { type: 'meta', meta: { info_grid: faq.grid, chips: hotel.welcome_chips.slice(0, 3) } })
   }
 
   send(res, { type: 'done' })

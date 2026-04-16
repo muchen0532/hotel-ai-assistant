@@ -1,0 +1,33 @@
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotel_ai
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url:
+      api-key: YOUR_API_KEY
+      model-name:
+
+agent:
+  historyWindow: 10
+  maxSteps: 5
+  rag:
+    topK: 3
+    scoreCutoff: 0.7
+  llm:
+    temperature: 0.3
+    maxTokens: 512
+
+jina:
+  api-key: ${JINA_API_KEY}
+  model: jina-embeddings-v3
