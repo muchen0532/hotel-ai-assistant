@@ -52,14 +52,14 @@ public class IntentClassifier {
             rule("滑雪|冲浪|运动|探险|surf|ski|dive|kayak|adventure|sport", IntentTypes.ATTRACTIONS, "sport"),
             rule("附近有什么|附近玩|去哪玩|周边|景点|旅游|attract|nearby|sightsee|visit|tourism", IntentTypes.ATTRACTIONS, null),
 
-            // ── 客控 Room Control ─────────────────────────
+			// --- 客控 Room Control ---
             rule("空调|温度|冷|热|太冷|太热|制冷|制热|air.?con|ac|hvac", IntentTypes.ROOM_CONTROL, "ac"), rule("开灯|关灯|灯光|亮一点|暗一点|调亮|调暗|light|lamp|brightness", IntentTypes.ROOM_CONTROL, "light"),
             rule("窗帘|拉开窗帘|关窗帘|打开窗帘|遮光|curtain|blind|drape", IntentTypes.ROOM_CONTROL, "curtain"),
             rule("勿扰|不要打扫|do.not.disturb|dnd", IntentTypes.ROOM_CONTROL, "dnd"), rule("打扫|清理房间|整理房间|收拾一下|clean.?up|housekeep|make.up.room", IntentTypes.ROOM_CONTROL, "housekeeping"),
             rule("电视|频道|换台|中央|cctv|音量|tv|television|channel|volume", IntentTypes.ROOM_CONTROL, "tv"),
 
 
-            // ── 送物 Delivery ──────────────────────────────────────────
+			// --- 送物 Delivery ---
             rule("送.*毛巾|拿.*毛巾|要.*毛巾|提供.*毛巾|毛巾|浴巾|towel|bath.?towel", IntentTypes.DELIVERY, "towel"),
             rule("牙刷|牙膏|洗漱|洗漱用品|toothbrush|toothpaste|shampoo|toiletries|amenities", IntentTypes.DELIVERY, "toiletries"),
             rule("枕头|被子|毯子|毛毯|床单|被褥|pillow|blanket|quilt|bedding", IntentTypes.DELIVERY, "bedding"),
@@ -68,7 +68,7 @@ public class IntentClassifier {
             rule("婴儿床|加床|儿童床|crib|baby.?bed|extra.?bed", IntentTypes.DELIVERY, "extra_bed"),
             rule("送餐|客房服务|客房餐|room.?service|deliver|send.?up", IntentTypes.DELIVERY, "room_service"),
 
-            // ── 礼宾 ─────────────────────────────────────────
+			// --- 礼宾 ---
             rule("叫醒|闹钟|明早叫我|叫我起床|晨叫|wake.?up|alarm|call", IntentTypes.CONCIERGE, "wakeup"),
             rule("接机|送机|接送|打车|网约车|叫车|去机场|taxi|cab|car|transfer", IntentTypes.CONCIERGE, "transport"),
             rule("行李|寄存|存包|取行李|luggage|baggage", IntentTypes.CONCIERGE, "luggage"),
@@ -80,60 +80,48 @@ public class IntentClassifier {
     }
 
     // ── 价格过滤（restaurant 场景用） ─────────────────────────────────────
-    private static final Pattern PRICE_BUDGET = Pattern.compile("budget|cheap|affordable", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PRICE_MID = Pattern.compile("mid.range|moderate", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PRICE_UPSCALE = Pattern.compile("upscale|fine.dining|luxury|high.end", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PRICE_BUDGET = Pattern.compile("便宜|实惠|省钱|平价|不贵|便宜点|cheap|budget|affordable", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PRICE_MID = Pattern.compile("中档|适中|一般|还行|差不多|mid.?range|moderate", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PRICE_UPSCALE = Pattern.compile("高档|高端|奢华|贵一点|好一点|精致|luxury|fine.?dining|upscale|high.?end", Pattern.CASE_INSENSITIVE);
+	
 
     // ── LLM 兜底 Prompt ───────────────────────────────────────────────────────
     private static final PromptTemplate CLASSIFY_PROMPT = PromptTemplate.from("""
-            You are the intent classifier for a hotel AI concierge.
-            你是酒店 AI 礼宾助手的意图分类器，需要准确理解中英文及中英混合输入。
-                    
-            ---
-            ## Intents
-            - faq          - 酒店基础信息（wifi、早餐、退房、政策）
-            - facilities   - 酒店设施信息查询（泳池、健身房、SPA）
-            - restaurant   - 餐厅推荐 / 用餐建议
-            - attractions  - 附近景点 / 周边推荐
-            - room_control - 客控操作（空调、灯光、窗帘、电视、免打扰、打扫）
-            - delivery     - 送物 / 客房服务（毛巾、水、牙刷、送餐）
-            - concierge    - 礼宾服务（叫醒、叫车、行李寄存、门票预订）
-            - general      - 以上均不符合
-                    
-            ---
-            ## Slots
-            faq          → faqCategory: "wifi"|"breakfast"|"checkout"|"facilities"|"general"
-            restaurant   → ambiance: ["romantic","family","casual"]  maxPrice: 1–4|null
-            attractions  → attractionCategory: "culture"|"nature"|"shopping"|"sport"|null
-            room_control → roomControlAction: "ac"|"light"|"curtain"|"dnd"|"housekeeping"|"tv"
-                           roomControlValue: 温度数字字符串 | "on"|"off"|"open"|"closed" | null
-            delivery     → deliveryItem: "towel"|"toiletries"|"bedding"|"water"|"iron"|"extra_bed"|"room_service"
-                           deliveryQuantity: integer|null
-            concierge    → serviceAction: "wakeup"|"transport"|"luggage"|"tour_booking"
-                           serviceDetail: 具体时间/地点/数量描述 | null
-                    
-            ---
-            ## Examples
-            "帮我送两瓶矿泉水"
-            → {"intent":"delivery","deliveryItem":"water","deliveryQuantity":2,...}
-                    
-            "空调太热了调到22度"
-            → {"intent":"room_control","roomControlAction":"ac","roomControlValue":"22",...}
-                    
-            "明早6点半叫醒我"
-            → {"intent":"concierge","serviceAction":"wakeup","serviceDetail":"06:30",...}
-                    
-            "Wi-Fi password please"
-            → {"intent":"faq","faqCategory":"wifi",...}
-                    
-            "附近有什么好玩的，最好是文化景点"
-            → {"intent":"attractions","attractionCategory":"culture",...}
-                    
-            ---
-            Guest message: {{message}}
-                    
-            Respond ONLY with valid JSON, no markdown, include ALL keys even if null:
-            {"intent":"...","faqCategory":null,"ambiance":[],"maxPrice":null,"attractionCategory":null,"roomControlAction":null,"roomControlValue":null,"deliveryItem":null,"deliveryQuantity":null,"serviceAction":null,"serviceDetail":null}
+			You are the intent classifier for a hotel AI concierge.
+			你是酒店 AI 礼宾助手的意图分类器，需要准确理解中英文及中英混合输入。
+
+			## Intents
+			- faq          - 酒店基础信息（wifi、早餐、退房、政策）
+			- facilities   - 酒店设施信息查询（泳池、健身房、SPA）
+			- restaurant   - 餐厅推荐 / 用餐建议
+			- attractions  - 附近景点 / 周边推荐
+			- room_control - 客控操作（空调、灯光、窗帘、电视、免打扰、打扫）
+			- delivery     - 送物 / 客房服务（毛巾、水、牙刷、送餐）
+			- concierge    - 礼宾服务（叫醒、叫车、行李寄存、门票预订）
+			- general      - 以上均不符合
+
+			## Slots
+			faq          → faq_category: "wifi"|"breakfast"|"checkout"|"facilities"|"general"
+			restaurant   → ambiance: ["romantic","family","casual"]  max_price: 1–4|null
+			attractions  → attraction_category: "culture"|"nature"|"shopping"|"sport"|null
+			room_control → room_control_action: "ac"|"light"|"curtain"|"dnd"|"housekeeping"|"tv"
+						   room_control_value: 温度数字字符串 | "on"|"off"|"open"|"closed" | null
+			delivery     → delivery_item: "towel"|"toiletries"|"bedding"|"water"|"iron"|"extra_bed"|"room_service"
+						   delivery_quantity: integer|null
+			concierge    → service_action: "wakeup"|"transport"|"luggage"|"tour_booking"
+						   service_detail: 具体时间/地点/数量描述 | null
+
+			## Examples
+			"帮我送两瓶矿泉水" → {{"intent":"delivery","delivery_item":"water","delivery_quantity":2}}
+			"空调太热了调到22度" → {{"intent":"room_control","room_control_action":"ac","room_control_value":"22"}}
+			"明早6点半叫醒我" → {{"intent":"concierge","service_action":"wakeup","service_detail":"06:30"}}
+			"Wi-Fi password please" → {{"intent":"faq","faq_category":"wifi"}}
+			"附近有什么好玩的，最好是文化景点" → {{"intent":"attractions","attraction_category":"culture"}}
+
+			Guest message: {message}
+
+			Respond ONLY with valid JSON, no markdown, include ALL keys even if null:
+			{{"intent":"...","faq_category":null,"ambiance":[],"max_price":null,"attraction_category":null,"room_control_action":null,"room_control_value":null,"delivery_item":null,"delivery_quantity":null,"service_action":null,"service_detail":null}}
             """);
 
     public AgentState classify(AgentState state) {

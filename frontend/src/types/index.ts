@@ -1,7 +1,9 @@
 // ─── Message Types ───────────────────────────────────────────────────────────
 
 export type MessageRole = 'user' | 'assistant'
-export type MessageStatus = 'sending' | 'streaming' | 'done' | 'error'
+export type MessageStatus = 'sending' | 'streaming' | 'done' | 'error' | 'pending'
+
+
 
 export interface RestaurantCard {
   name: string
@@ -38,6 +40,7 @@ export interface ChatMessage {
   status: MessageStatus
   meta?: MessageMeta
   timestamp: Date
+  interruptData?: InterruptData
 }
 
 // ─── Hotel ───────────────────────────────────────────────────────────────────
@@ -103,14 +106,27 @@ export interface ChatRequest {
   message: string
 }
 
+
 /** Server-Sent Events delta chunk */
-export interface StreamChunk {
-  type: 'text_delta' | 'meta' | 'done' | 'error'
-  delta?: string
-  meta?: MessageMeta
-  error?: string
-}
+export type StreamChunk =
+  | { type: 'text_delta'; delta: string }
+  | { type: 'meta'; meta: MessageMeta }
+  | { type: 'done' }
+  | { type: 'error'; error: string }
+  | { type: 'interrupt'; data: InterruptData }
+  
 
 // ─── Auth state ───────────────────────────────────────────────────────────────
 
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'error'
+
+
+// ─── Interrupt ────────────────────────────────────────────────────────────────
+
+export interface InterruptData {
+  intent:      string
+  room_number: string
+  action:      string | null
+  detail:      string | null
+  message:     string
+}

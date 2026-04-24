@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { v4 as uuidv4 } from './uuid'
-import type { ChatMessage, MessageMeta } from '@/types'
+import type { ChatMessage, MessageMeta, InterruptData } from '@/types'
 
 export const useChatStore = defineStore('chat', () => {
   // ─── State ─────────────────────────────────────────────────────────────────
@@ -72,6 +72,15 @@ export const useChatStore = defineStore('chat', () => {
     error.value = errMsg
   }
 
+  function setMessagePending(id: string, interruptData?: InterruptData) {
+    const msg = messages.value.find((m) => m.id === id)
+    if (msg) {
+      msg.status        = 'pending'
+      msg.content       = '您的请求已提交，等待前台确认...'
+      msg.interruptData = interruptData
+    }
+  }
+
   function clearError() {
     error.value = null
   }
@@ -97,7 +106,9 @@ export const useChatStore = defineStore('chat', () => {
     setMessageMeta,
     finalizeMessage,
     setMessageError,
+    setMessagePending,
     clearError,
     clearHistory,
   }
 })
+

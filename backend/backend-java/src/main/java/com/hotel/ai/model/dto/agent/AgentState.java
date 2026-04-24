@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AgentState {
 
-    // ── Input ───────────
+    // ── Input ───────────────────────────────────——────────────——─────
     private String hotelId;
     private UUID sessionId;
     private String userMessage;
