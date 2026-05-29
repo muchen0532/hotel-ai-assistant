@@ -37,3 +37,4 @@ go.work.sum
 /db
 /agent
 /backend/backend-python/venv
+/docs/soft-copyright
