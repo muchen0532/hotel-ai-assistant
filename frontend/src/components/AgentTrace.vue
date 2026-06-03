@@ -1,7 +1,7 @@
 <template>
   <div class="agent-trace" v-if="steps.length">
     <div class="trace-header">
-      <span class="trace-icon">⚙</span>
+      <span class="trace-icon" aria-hidden="true">•</span>
       <span>Agent trace</span>
     </div>
     <div
